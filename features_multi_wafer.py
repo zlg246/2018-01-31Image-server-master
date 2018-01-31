@@ -256,7 +256,7 @@ def create_overlay(features, boundaries=None, dis_strong=False):
         r[mask] = 255
 
     # background
-    if True:
+    if features['impure_area_fraction'] > 0:
         # show impure as red
         b -= impure
         g -= impure
@@ -851,7 +851,7 @@ def feature_maps(features):
     """
     gc.collect()
 
-    im = features['im_normed']
+    im = features['im_saw_slope_corrected']
     im_smoothed = features['im_smooth_0.5']
 
     # Impurity analysis: find impure regions by detecting inverted ridges
@@ -951,14 +951,23 @@ def feature_maps(features):
     pixel_ops.ApplyThresholdLT_F32_U8(background, impure_area, parameters.IMPURE_THRESHOLD, 1)
     num_pixels = float(im.shape[0] * im.shape[1])
     num_impure_pixels = cv2.sumElems(impure_area)[0]
+
     features['mask_impure_area'] = impure_area
-    features['impure_area_fraction'] = (num_impure_pixels / float(num_pixels))
+    features['impure_area_fraction'] = num_impure_pixels / float(num_pixels)
 
     if features['impure_area_fraction'] > parameters.MIN_IMPURE_AREA:
-        features['impure_area_mean_intensity'] = 1.0 - pixel_ops.MaskMean_F32(im, impure_area, 1)
+        features['impure_area_mean_intensity'] = 1.0 - pixel_ops.MaskMean_F32(np.ascontiguousarray(im), impure_area, 1)
     else:
         features['impure_area_mean_intensity'] = 0
         features['impure_area_fraction'] = 0
+
+    # new ratio metric
+    impurePL = pixel_ops.MaskMean_F32(np.ascontiguousarray(im), impure_area, 1)
+    normalPL = pixel_ops.MaskMean_F32(np.ascontiguousarray(im), impure_area, 0)
+    if normalPL > 0:
+        features['impure_area_mean_intensity_2'] = 1 - (impurePL/normalPL)
+    else:
+        features['impure_area_mean_intensity_2'] = 0
 
     # background histogram features
     background_bins = np.zeros((5), np.float32)
@@ -1311,7 +1320,7 @@ def saw_mark_removal(im):
 
     saw_mark_period = np.median(peaks - np.roll(peaks, 1))
 
-    f1 = np.ones((saw_mark_period, 1), dtype=np.float32) / saw_mark_period
+    f1 = np.ones((int(saw_mark_period), 1), dtype=np.float32) / saw_mark_period
     no_saw = ndimage.convolve(im, f1, mode="reflect")
 
     if flipped:
@@ -1402,7 +1411,6 @@ def feature_extraction(im, crop_props, fn=None, features=None):
     :type normalised_flag: bool
     :returns: Dictionary of wafer features, including maps, masks and metrics.
     """
-
     # initialise features and add settings
     if features is None:
         features = {}
@@ -1453,13 +1461,6 @@ def feature_extraction(im, crop_props, fn=None, features=None):
         view.show()
         sys.exit()
 
-    if parameters.SAW_MARK_MULTI_WAFER:
-        # saw mark removal
-        im = saw_mark_removal(im)
-
-    if parameters.SLOPE_MULTI_WAFER:
-        im = correct_slope(im)
-
     # histogram based features - get information about the distribution of
     #  PL intensities. This is useful for image normalisation and some feature
     #  metrics.
@@ -1476,6 +1477,17 @@ def feature_extraction(im, crop_props, fn=None, features=None):
 
     if 'input_param_skip_features' in features and int(features['input_param_skip_features']) == 1:
         return features
+
+    # create a flat version of original image.
+    flattened = im_normed.copy()
+    if parameters.SAW_MARK_MULTI_WAFER:
+        # saw mark removal
+        flattened = saw_mark_removal(flattened)
+        features['im_no_saw'] = flattened
+
+    if parameters.SLOPE_MULTI_WAFER:
+        flattened = correct_slope(flattened)
+    features['im_saw_slope_corrected'] = flattened
 
     # pre-compute some features that are reused several times in subsequent processing
     # - a robust version of the smoothed image: removes salt & pepper/white
@@ -1663,10 +1675,19 @@ def combined_features(features):
         normed = features['im_normed_full']
     else:
         normed = features['im_normed']
-    pixel_ops.ClipImage(normed, 0.0, 1.0)
-    features['im_cropped_u8'] = (normed * 255).astype(np.uint8)
+    pixel_ops.ClipImage(np.ascontiguousarray(normed), 0.0, 1.0)
+    #features['im_cropped_u8'] = (normed * 255).astype(np.uint8)
 
-    imp_cutoff = 0.55
+    # changed type: remove dark pixels in overlay images.
+    features['im_cropped_u8'] = (normed * 255).astype(np.float32)
+
+    if False:
+        view = ImageViewer(normed)
+        ImageViewer(features['im_cropped_u8'])
+        view.show()
+        sys.exit()
+
+    imp_cutoff = parameters.IMPURE_THRESHOLD
     impure = features['_background'].copy()
     pixel_ops.ApplyThresholdGT_F32(impure, impure, imp_cutoff, imp_cutoff)
     impure /= imp_cutoff
