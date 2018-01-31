@@ -1,0 +1,178 @@
+Client-server communication protocol
+====================================
+
+REQUEST:
+
+Generic parameters:
+-------------------
+
+    - verbose (default: 0)
+    - already_cropped (default: 0)
+    - skip_features (default: 0)
+    - return_cropped (default: 1)
+    - return_uncropped (default: 0)
+    - return_outline (default: 0)
+
+Function code
+-------------
+
+-1 byte:
+    - 0: Dummy call
+        - input: nothing
+        - output: response code (=0)
+    - 10: R2 waffle pattern correction
+        - input image: "im_pl"
+    - 40: Block Feature Extraction
+        - input image: "im_pl"
+    - 70: Slugs
+        - input image: "im_pl"
+        - numerical input parameters:
+            - rds_percent: a number from 0 to 100 representing the % of radius for computing RDS
+            - slug_radius: radius of slug (in pixels). if provided, force slug radius. if 0 algorithm will determine automatically
+    - 71: Pseudo-square slugs
+        - same as mode 70
+    - 80: PERC mono cell
+        - input image: "im_pl"
+    - 81: PERC multi cell
+        - input image: "im_pl"
+    - 82: mono cell
+        - input image: "im_pl"
+        - numerical input parameters:
+            - no_post_processing: 1 to turn off feature combination
+    - 83: multi cell
+        - input image: "im_pl"
+    - 84: mono wafer
+        - input image: "im_pl"
+    - 85: multi wafer
+        - input image: "im_pl"
+    - 86: X3 (stripes)
+        - input image: "im_pl"
+        - numerical input parameters:
+            - num_stripes: the number of strips in the cell
+    - 87: Stripe (mono)
+        - input image: "im_pl"
+    - 88: Stripe (multi)
+        - input image: "im_pl"
+    - 89: QC-C3:
+        - input image: "im_pl"
+    - 90: PLIR
+        - input images: "im_pl,im_sp,im_lp,im_xfer"
+            - im_xfer is an 32-bit float array with N rows and 5 columns. The columns are as follows:
+                - Tau
+                - PLIR
+                - no filter
+                - short pass
+                - long pass
+    - 100: M1
+        - input images: "im_pl,im_el"
+    - 92: distance between lines on a brick
+    - 95: Resolution (pixels per mm for rule image)
+        - input image: "im_pl"
+    - 255: shutdown server
+
+Image input
+-----------
+
+- Number of bytes in image name string (4 bytes, unsigned int)
+- Comma delimited image names ("Number of bytes in parameter name string" bytes)
+    - by default, use the name "im_pl"
+- for each image:
+    - Image width (2 bytes, unsigned 16 bit)
+    - Image height (2 bytes, unsigned 16 bit)
+    - Bit depth (1 byte, unsigned 8 bit)
+    - Binning (1 byte, unsigned 8 bit)
+    - if width and height are > 0: (pass data)
+        - Image data (width * height * (bit_depth/8) bytes)
+    - else: (pass image path)
+        - Path length (1 byte, unsigned 8 bit)
+        - Path length bytes
+
+Floating point parameter list
+-----------------------------
+
+General purpose numerical input parameters:
+    - verbose: 0 or 1.
+        - If active, include details. e.g for cells, include info about individual cracks,
+          finger breaks, etc
+    - already_cropped: 0 or 1
+        - used to indicate that the cell/wafer/brick has already been cropped
+        - valid for modes 40, 80-86
+    - skip_features: 0 or 1
+        - skip feature extraction for cell/wafer algorithms
+
+- Number of bytes in parameter name string (4 bytes, unsigned int)
+- Comma delimited parameter names ("Number of bytes in parameter name string" bytes)
+    - parameters are optional: default values will be used when missing, and undefined names are ignored.
+    - current parameters:
+        - verbose: when 1, return all metrics (including things like broken finger and crack properties)
+        - skip_features: when 1, only do cropping and histogram
+- Parameter values ((number of parameters) x 4 bytes, 32-bit float)
+
+String parameter list
+---------------------
+
+General purpose string input parameters:
+    - im_output_path: If a path is provided, all images will be written to this folder and passed by path
+
+- Number of bytes in parameter name string (4 bytes, unsigned int)
+- Comma delimited parameter names ("Number of bytes in parameter name string" bytes)
+- Number of bytes in parameter value string (4 bytes, unsigned int)
+- Comma delimited string of parameter values
+
+
+RESPONSE:
+
+Error message
+-------------
+
+- If >= 1, no more bytes will follow (1 byte, unsigned 8-bit)
+    - 0: success
+    - 1: unspecified error (looking at server console for further information)
+    - 2: could not find cell/wafer
+    - 3: could not find cell busbars
+    - 4: could not find cell fingers
+    - 5: PLIR transfer functions not found
+
+
+Image output
+------------
+
+- Number of bytes in image description string (4 bytes, unsigned int)
+- Comma delimited list of images that will be returned ("number of bytes in image description string" bytes)
+- Image data
+
+Images types:
+    - im/mk/bl/ov_*_u8: Unsigned 8-bit images (e.g. im_norm_u8)
+    - im/mk/bl/ov_*_u16: Unsigned 16-bit images (e.g. im_norm_u16)
+    - im_*_f32: 32-bit floating point images (e.g.  im_tau_bulk_f32)
+
+For each image:
+    - Image width (2 bytes, unsigned 16 bit)
+    - Image height (2 bytes, unsigned 16 bit)
+    - Bit depth (1 byte, unsigned 8 bit)
+    - Binning (1 byte, unsigned 8 bit)
+    - if width and height > 0: (pass data)
+        - for u8:
+            - first 4 bytes is an unsigned integer giving the length of the PNG encoding. call this COUNT.
+            - the next COUNT bytes are raw PNG data (including header)
+        - for u16 and f32
+            - Image data (width * height * (bit_depth/8) bytes)
+    - else: (pass image path)
+        - Path length (1 byte, unsigned 8 bit)
+        - Path length bytes
+
+Numerical metrics
+-----------------
+
+- Number of bytes in metric name string (4 bytes, unsigned int)
+- Comma delimited list of metric names ("number of bytes in metric name string" bytes)
+- Metric values (number of metrics * 4 bytes, 32-bit floats)
+
+String metrics
+--------------
+
+- Number of bytes in metric name string (4 bytes, unsigned int)
+- Comma delimited list of metric names ("number of bytes in metric name string" bytes)
+- Number of bytes in metric value string (4 bytes, unsigned int)
+- Comma delimited list of metric values
+

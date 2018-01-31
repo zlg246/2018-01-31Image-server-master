@@ -1,0 +1,1441 @@
+Usage
+=====
+
+To start the sever, run:
+
+c:\Python27\python.exe server.py
+
+Error messages are sent to stdout.
+
+To run multiple servers, the above command can be run in several command windows. The only necessary update is to change the value of the PORT variable in server.py for each concurrent server.
+
+History
+=======
+
+Version NY.4.3.0.2
+------------------
+
+- mono wafer/cell outline bug
+- binary masks (mk_*_u8) are now 0/255 (instead of 0/1)
+
+Version NY.4.3.0.1
+------------------
+
+- update PLIR algorithm to use robust means (to avoid banding artifacts)
+
+Version NY.4.3.0.0
+------------------
+
+- removed all cropping modes and added options for:
+    - return_cropped
+    - return_uncropped
+    - return_outline
+- added functionality to stripes
+- renamed im_norm_u8 to im_cropped_u8
+- added parameters.CELL_NO_BBS to support cells with no busbars
+
+Version NY.4.2.3.2
+------------------
+
+- add skip_features options to all feature algs
+- update PLIR algs so that xfer function is applied to whole column of intensities when finding c-vals
+- slope correction feature for multi wafers (parameters.SLOPE_MULTI_WAFER)
+- added QC-C3 server call (mode 89)
+
+Version NY.4.2.3.1
+------------------
+
+- fix scaling of bit-layer images when returning by path
+- rename bl_%02d_cell_structure_u8 to bl_%02d_cropped_u8 in X3
+- make block dislocation less sensitive (and move threshold to parameters.py) (parameter change reverted)
+- some work on stripe algorithms
+
+Version NY.4.2.3.0
+------------------
+
+- multi cell cracks
+- added stripe processing (modes 11, 87 & 88)
+- major code clean up (prep for moving to github)
+- renamed dislocation_area (mode 40) to dislocation_area_fraction
+
+Version NY.4.2.2.3
+------------------
+
+- find marker bug fix
+
+Version NY.4.2.2.2
+------------------
+
+- blocks:
+    - marker location returns 0 if marker not found
+    - return cropped overlays
+    - general code refactor
+
+Version NY.4.2.2.1
+------------------
+
+- fixed slug bug (foreground now 0, not 1)
+- include corner locations for modes 2&3
+- pass BL transfer functions as an input image
+
+Version NY.4.2.2.0
+------------------
+
+- blocks:
+    - renamed ov_dislocations_u8 to ov_defects_u8
+    - make marker location refect full-res image
+    - turned off multi analysis in BL mode
+    - select PLIR or PLIR2 based on input
+
+Version NY.4.2.1.10
+-------------------
+
+- add list of metrics and images to release
+- added mode 95 for resolution
+- block: Rename "impure_area" metric to "impure_area_fraction"
+- some speed optimizations to cell algorithms
+
+Version NY.4.2.1.9
+------------------
+
+- moved location of PLIR transfer functions
+- more work on module segmentation & cell registration
+- blocks: renamed ov_foreground_u8 to ov_dislocations_u8 (fixed)
+
+Version NY.4.2.1.8
+------------------
+
+- updates to module segmentation
+- added a mode for block cropping
+
+Version NY.4.2.1.7
+------------------
+
+- fix for markers in PLIR images
+- blocks: renamed ov_foreground_u8 to ov_dislocations_u8
+
+Version NY.4.2.1.6
+------------------
+
+- slug cropping defaults
+- add bl_cropped_u8 to wafers
+
+Version NY.4.2.1.5
+------------------
+
+- added saw mark correction for multi wafers
+- speed up slug detection
+- some changes to make the crop masks more consistent.:
+    - renamed to bl_cropped_u8 and bl_uncropped_u8
+    - added the 'return_mask' & 'return_cropped' flags for all crop modes
+
+Version NY.4.2.1.4
+------------------
+
+- added a threshold to impure area for multi wafer. Set metrics to 0 if below a threshold
+- for slugs, add crop mask and its own cropping call
+
+Version NY.4.2.1.3
+------------------
+
+- for PERC mono, call mono cell dark spots
+- "hist_percentile_50" to "hist_median"
+- added new RDS metrics
+
+Version NY.4.2.1.2
+------------------
+
+- added "general_asymmetry" metric
+- include tool_calibrate.pyc in dist
+- update to busbar detection (allow BB's < 10% distance from edge)
+- update to multi cell bright area detection
+- some metric name changes
+- added harmonic mean to general purpose hist properties
+- apply mini-busbar correction to finger shape analysis
+- update to tool_calibrate (report sign)
+- for finding the center of slugs, limit search to 150 (memory error at 200)
+
+Version NY.4.2.1.1
+------------------
+
+- fixed distribution bug
+- rename col and row count for X3 and M1
+- for M1, return u16 instead of u8
+- support PL-only mode
+
+Version NY.4.2.1.0
+------------------
+
+- rename the sub-image masks "mk_01_cracks_u8" instead of "crack"
+- X3 support "ORIGINAL_ORIENTATION" parameter
+- added cell template mask to X3
+- more metrics in range [0, 1]
+- added M1 mode
+
+Version NY.4.2.0.9
+------------------
+
+- _area_fraction metrics should be in the range [0, 1]
+- added cracks to mono X3
+
+Version NY.4.2.0.8
+------------------
+
+- For multi cells, make impure_area_fraction and impure_edge_width consistent
+
+Version NY.4.2.0.7
+------------------
+
+- work on "already_cropped" consistency
+- minor cell cropping update. don't allow low radius, and CELL_EDGE_THRESH  from 0.025 to 0.023
+- updated the metric for impure_area_mean_intensity  (made 1-X)
+- added "defect_present": 0 if no cracks, 1 if cracks
+
+Version NY.4.2.0.6
+------------------
+
+- pass by path bug fix (try #2)
+
+Version NY.4.2.0.5
+------------------
+
+- pass by path bug fix
+
+Version NY.4.2.0.4
+------------------
+
+- support for pre-cropped
+
+Version NY.4.2.0.3
+------------------
+
+- More updates to generic protocol
+
+Version NY.4.2.0.2
+------------------
+
+- More updates to generic protocol (should be getting close)
+
+Version NY.4.2.0.1
+------------------
+
+- updates to generic protocol
+
+Version NY.4.2.0.0
+------------------
+
+- port all algs to generic protocol
+- removed R&D cropping options
+
+
+Version NY.4.1.6.4
+------------------
+
+- rename multi cell dislocation metrics (and added strength)
+- added M1 code to source distribution
+
+Version NY.4.1.6.3
+------------------
+
+- new defect strength metrics for multi cells
+
+Version NY.4.1.6.2
+------------------
+
+- rotation fix for rectangular images & a few cropping changes
+
+Version NY.4.1.6.1
+------------------
+
+- added harmonic mean for X3
+- added impure and dislocation for multi X3
+
+Version NY.4.1.6.0
+------------------
+
+- new server alg for X3
+- minor tweak on slug metrics
+
+Version NY.4.1.5.0
+------------------
+
+- new mode for pseudo-round slugs
+- lots of work on mono cell cracks
+
+Version NY.4.1.4.11
+-------------------
+
+- work on cell cracks
+- server bug (when no parameters)
+
+Version NY.4.1.4.10
+-------------------
+
+- return new edge_width metric for mode 90 as well
+
+Version NY.4.1.4.9
+------------------
+
+- return new edge_width metric
+
+Version NY.4.1.4.8
+------------------
+
+- block edge width
+- option to remove mini busbars
+- exposed various parameters for greater control of cell alg output
+
+Version NY.4.1.4.7
+------------------
+
+- added a parameter for cell cropping background thresh
+
+Version NY.4.1.4.6
+------------------
+
+- catch a few cropping errors as exceptions
+
+Version NY.4.1.4.5
+------------------
+
+- updates to metrics:
+    - dark_area_strength reverted
+    - dark_spots_strength update to be less sensitive to noise
+    - impure_strength2 added
+- cell rotation bug fix
+- cell rotation update:
+    - padding update (for cells that are partially outside frame)
+    - var_ratio threshold updated
+
+Version NY.4.1.4.4
+------------------
+
+- return line locations and cropped image for mode 92
+- new block dislocation metrics: defect_robust & defect_surface
+
+Version NY.4.1.4.3
+------------------
+
+- multi cells: improved background correction for dislocations
+- mono cells: changed definition of 'dark_area_strength'
+
+Version NY.4.1.4.2
+------------------
+
+- PLIR cropping fix
+
+Version NY.4.1.4.1
+------------------
+
+- added new server mode for distance between brick marker lines
+
+Version NY.4.1.4.0
+------------------
+
+- move back to 3 images, but support high-res and low-res no-filter input
+
+Version NY.4.1.3.3
+------------------
+
+- new PLIR analysis mode based on 2 images instead of 3
+
+Version NY.4.1.3.2
+------------------
+
+- base cutting locations on marker
+
+Version NY.4.1.3.1
+------------------
+
+- updated PLIR cutting guides
+- removed cutting guides from mode 40
+
+Version NY.4.1.3.0
+------------------
+
+- fixed brick bug
+- added "cut_bottom" and "cut_top" to PLIR
+- always assume rounded corners for cell cropping (even square multi, so account for chamfer)
+
+Version NY.4.1.2.11
+-------------------
+
+- support chamfer for multi cells
+
+Version NY.4.1.2.10
+-------------------
+
+- cropping fine-tune
+
+Version NY.4.1.2.9
+------------------
+
+- fix dislocation density bug
+
+Version NY.4.1.2.8
+------------------
+
+- reduce dark middle false positives
+- more work on cell cropping
+- added CELL_BORDER_ERODE
+- removed background thresholds
+
+Version NY.4.1.2.7
+------------------
+
+- updates to PLIR cropping
+
+Version NY.4.1.2.6
+------------------
+
+- expose CELL_MULTI_BACKGROUND_THRESH & CELL_MONO_BACKGROUND_THRESH
+
+Version NY.4.1.2.5
+------------------
+
+- new multi cell metrics
+- rotation correction
+
+Version NY.4.1.2.4
+------------------
+
+- multi cropping
+- rotation correction bug fix
+
+Version NY.4.1.2.3
+------------------
+
+- more work on PERC, busbars & rotation correction
+
+Version NY.4.1.2.2
+------------------
+
+- more work on PERC cropping
+
+Version NY.4.1.2.1
+-------------------
+
+- work on PERC cropping. guess if fingers are lines or grid
+
+Version NY.4.1.2.0
+-------------------
+
+- renaming metrics for consistency
+
+Version NY.4.1.1.10
+-------------------
+
+- crack metrics for mono cell
+
+Version NY.4.1.1.9
+------------------
+
+- impure area fraction bug fix
+
+Version NY.4.1.1.8
+------------------
+
+- metric for firing defect
+- num_bright_lines for mono cells
+
+Version NY.4.1.1.7
+------------------
+
+- block refactoring and change impure overlay to be consistent with other algs
+- multi bright lines
+- finger shape bug fix
+
+Version NY.4.1.1.6
+------------------
+
+- multi cell bright areas
+- multi dislocations near busbars
+- lots of work on parameters
+
+Version NY.4.1.1.5
+------------------
+
+- added BRIGHT_AREA_SENSITIVITY parameters
+- work on dark middle for cells
+- added resistance_finger & resistance_finger_error metrics
+- break broken finger alg into 2 parts (features are computed after post-processing)
+
+Version NY.4.1.1.4
+------------------
+
+- work on PLIR: speed & bug fix
+- multi cell dislocations (grain vs defect)
+
+Version NY.4.1.1.3
+------------------
+
+- updated RDS overlay
+- added input param to skip post-processing
+
+Version NY.4.1.1.2
+------------------
+
+- fixed mk_ rotate bug
+- return cropped u8 PL for PLIR mode
+
+Version NY.4.1.1.1
+------------------
+
+- added some missing metrics for the multi cell algo
+
+Version NY.4.1.1.0
+------------------
+
+- invert impure masks for multi cells and wafers
+- fixed ORIGINAL_ORIENTATION bug
+- add impure/defect masks to PLIR server call
+
+Version NY.4.1.0.10
+-------------------
+
+- multi cells: cropping & busbars
+
+Version NY.4.1.0.9
+------------------
+
+- more work on PLIR, including I/O data types
+
+Version NY.4.1.0.8
+------------------
+
+- work on PLIR algorithm
+
+Version NY.4.1.0.7
+------------------
+
+- work on reporting and testing framework
+- support for 5 busbars & and few fixes for mega-pixel images
+- work on block feature extraction & PLIR processing
+
+Version NY.4.1.0.6
+------------------
+
+- multi wafer bug fix
+- higher-level processing for mono cells. e.g. ignore defects in firing areas
+- busbar verification update
+- low level cropping fix for non-square wafers/cells
+
+Version NY.4.1.0.5
+------------------
+
+- parameter to specify how much non-squareness the wafer cropping alg can tolerate
+- updates to calibration tool
+- work on firing
+- update to slug dark_corner_strength
+
+Version NY.4.1.0.4
+------------------
+
+- mono cell dark spots
+- mono cell bug fixes
+- busbar & rotation correction updates
+- dark areas alg
+- broken finger update
+
+Version NY.4.1.0.3
+------------------
+
+- work on slugs
+- added "tool_calibrate.py" script
+- renames "mask_cell_structure_u8" to "blay_cell_structure_u8"
+- added command line option to FF.py to compute a tool specific hash pattern
+- support overriding defaults in parameters.py in generic server calls
+- rename image prefix to mk_, ov_, bl_, im_
+- "tool_calibrate" for working out the best knob rotation on a tool
+
+Version NY.4.1.0.2
+------------------
+
+- move from RLE to PNG compression, and apply to all 8-bit images
+- added busbar detection width modes
+
+Version NY.4.1.0.1
+------------------
+
+- put block back into client.py
+- fixed cropping crash when using PERC
+- added mode 11 to server: PERC cell cropping
+- lots of work on broken finger detection
+- dark area detection
+- rename "bright_lines_mean" to "bright_area_strength"
+- added "bright_area_mean_PL", "bright_area_PL_intensity_ratio", "brgight_area_fraction"
+- added "dark_area_strength", "dark_area_mean_PL" and "dark_area_PL_intensity_ratio", "dark_area_fraction"
+- added dislocation_hist_01-05
+
+Version NY.4.1.0.0
+------------------
+
+- added VERSION file, and include parameters.py in dist
+- fixed defect number with verbose=False bug
+- send metrics in alphabetical order (for generic mode only)
+- run length encoding for masks
+- migrate multi & mono wafer algs to generic algorithm (old server modes removed)
+- multi cell impure edge detection
+- added "imp_edge_width" to multi wafers & cells
+- added "bright_lines_mean" (area normalized version of bright_lines_sum)
+- added "dark_corner_strength" to mono algs
+- added "circle_strength" (removed "ring_strength")
+- added "mask_dark_corner_u8"
+- added "impure_area_fraction" and "dislocation_area_fraction" to multi cells
+
+Version NY.4.0.3.8
+------------------
+
+- added some dark corner metrics & overlay
+- RDS overlay
+- fixed pixel ops bug (unsigned chars)
+
+Version NY.4.0.3.7
+------------------
+
+- work on cell cropping
+
+Version NY.4.0.3.6
+------------------
+
+- busbar detection fix
+
+Version NY.4.0.3.5
+------------------
+
+- fine-tune wafer cropping by relaxing squareness assumption
+- cropping: based edges on original image
+- added memory mapping server proof of concept
+
+Version NY.4.0.3.4
+------------------
+
+- added MONO_CROP_SNR for rejecting bad mono crops
+- minor updates to mono cropping alg
+
+Version NY.4.0.3.3
+------------------
+
+- mono wafer:
+  - a new test for wafer missing/bad crop
+  - cropping for wafers with high dynamic range
+  - option in parameters.py to skip everything except histogram features
+- added image names master list
+
+Version NY.4.0.3.2
+------------------
+
+- multi cell bright areas
+- server shutdown bug
+- start using 'over_' for images that will be in overlays
+- update to "generic" protocol: list each bit mask
+
+Version NY.4.0.3.1
+------------------
+
+- update to slug circle_strength metric
+- added multi/mono cell processing to "generic" image processing server call
+- dark corner bug
+
+
+Version NY.4.0.3.0
+------------------
+
+- multi cell impure detection
+- multi cell disloation detection
+- PLIR protocol
+- slug bright corner bug
+
+Version NY.4.0.2.8
+------------------
+
+- cropping bug
+
+Version NY.4.0.2.7
+------------------
+
+- fixed rotation correction bug
+- work on multi cells (onoging)
+
+Version NY.4.0.2.6
+------------------
+
+- Minor update to busbar detection
+- Fix for cropping mode 9xs ..
+
+Version NY.4.0.2.5
+------------------
+
+- minor adjustment to wafer classification rules
+- for cropping mode 9, return full image area
+- experimental new bright area zones for mono cells
+- rotation correction bug for non-square images
+- new slug feature
+
+Version NY.4.0.2.4
+------------------
+
+- removed histogram-based bright/dark area detection code
+- minor fix to slug metrics
+
+Version NY.4.0.2.3
+------------------
+
+- added individual crack properties to mono cell
+- mon & cell cracks: if not verbose mode, limit # of cracks to 5 biggest
+- individual broken finger properties (for verbose mode)
+- update cell cropping mode to latest code
+
+Version NY.4.0.2.2
+------------------
+
+- turn off SEMI for runtime test
+- changed compiler (GCC to MSVC) for Cython
+
+Version NY.4.0.2.1
+------------------
+
+- faster and more robust rotation correction
+- update to dark middle (more robust to bright broken fingers at top/bottom)
+- added features to PERC (cracks & wafer features)
+- adjustment to busbar detection
+
+Version NY.4.0.2.0
+------------------
+
+- mono wafer: refactor, ring detecting/correction, crack detection
+- change the way "dark middle" works
+- updates to busbar width estimation
+- re-write of broken finger/bright lines
+- return mask for mono wafers
+- refactoring to increase consistency of metric names between algs
+- option to return results in same orientation as input (parameters.ORIGINAL_ORIENTATION)
+- better handling of errors
+- added PERC mono
+- new generic server function
+- added cov to histogram features
+
+Version NY.4.0.1.0
+------------------
+
+- refactor cell multi algs
+- updates to rotation correction
+- update to bright line/broken finger detection
+- some updates to the protocol for mono wafers (to make API more consistent with mono cells)
+
+
+Version NY.4.0.0.5
+------------------
+
+- updates to cropping, finger detection & rotation correction
+- made normalization more robust (now based on foreground median, as opposed to 99.9 percentile)
+- rewrite of crack detection
+- fundamental changes to bright/dark area detection
+- support cell designs with 2&4 busbars
+
+Version NY.4.0.0.4
+------------------
+
+- updates to slug algorithm: cropping and bright corner metrics
+- updates to broken finger detection (hybrid method detects breaks near busbars)
+- updates to cell edge width estimation algorithm
+- added resistivity analysis (finger & emitter)
+- dark circle mask
+- numerous fixes and minor updates to C3 algs
+
+Version NY.4.0.0.2
+------------------
+
+- refactoring C3 algs
+
+Version NY.4.0.0.2
+------------------
+
+- major revisions to C3 algs
+
+Version NY.4.0.0.1
+------------------
+
+- continued work on C3 algs (planning shorter release cycle)
+
+Version NY.4.0.0.0
+------------------
+
+- lots of work on cell (mono & multi) algorithms
+
+Version NY.3.0.6.0
+------------------
+
+- fixed pre-cropped block bug
+- updates to block processing alg
+- added multi cell call to server
+- update to the way parameters.py are set for local testing, and change to default setting of MASK_SENSITIVITY
+- added slugs (algs & server option)
+
+Version NY.3.0.5.2
+------------------
+
+- new CZ cell metrics
+
+Version NY.3.0.5.1
+------------------
+
+- modifications to FF correction method
+- block processing updates
+- multi cell algorithm updates
+- mono cell mask: use hot encoding
+
+Version NY.3.0.5.0
+------------------
+
+- added online FF correction option
+- new function for correcting hash patterns on R2's
+
+Version NY.3.0.4.6
+------------------
+
+- minor updates to the mono wafer algorithm
+
+Version NY.3.0.4.5
+------------------
+
+- adjustments to multi wafer classifcation rules
+- mono wafer alg: improve "flatten" routine for corner regions
+
+Version NY.3.0.4.4
+------------------
+
+- chips & bright areas in cz cells
+
+Version NY.3.0.4.3
+------------------
+
+- optimization of cell cracks
+- minor bug fix for multi algorithm
+
+Version NY.3.0.4.2
+------------------
+
+- a lot of work on cell cracks, including a template-based option
+
+Version NY.3.0.4.1
+------------------
+
+- bug fix in FastHistogram
+- modified server for cell cracks: return corners & 8-bit image
+
+Version NY.3.0.4.0
+------------------
+
+- started work on template-based cell crack detection
+- update server to return cropped results for cell cracks
+
+Version NY.3.0.3.7
+------------------
+
+- added a new feature that is the average intensity of dislocations
+
+Version NY.3.0.3.6
+------------------
+
+- updates to cell crack algorithm to support LED images
+
+Version NY.3.0.3.5
+------------------
+
+- continue cell crack development
+- return additional crack features
+
+Version NY.3.0.3.4
+------------------
+
+- continue cell crack development
+- optionally include SEMI metrics
+
+Version NY.3.0.3.3
+------------------
+
+- add runtime to multi features
+- continue cell crack development
+
+Version NY.3.0.3.2
+------------------
+
+- new CZ cell algorithm for crack detection
+- CZ wafer tuning
+
+Version NY.3.0.3.1
+------------------
+
+- major changes to CZ defect algorithms:
+  - improve flattening algorithm
+  - tight integration with ground truth
+
+Version NY.3.0.3.0
+------------------
+
+- added a new cropping function for R&D cells
+- added crack performance to report
+- move cropping functions into own module
+
+Version NY.3.0.2.6
+------------------
+
+- added "pinhole" defect to CZ wafer alg
+
+Version NY.3.0.2.6
+------------------
+
+- more updates to crack algorithm
+
+Version NY.3.0.2.5
+------------------
+
+- minor update to the way host/port are returned by server
+- added a separate parameter for CZ border erode
+- changes to crack algorithm:
+ - better detection near edges
+ - more robust to rings
+
+Version NY.3.0.2.4
+------------------
+
+- changes to the multi alg parameters returned by the server
+- detect saw mark orientation
+- CZ wafer alg:
+  - re-tuned based on new CIC data
+  - make dark_corners more robust
+  - new normalization routine (now similar to multi alg)
+
+Version NY.3.0.2.3
+------------------
+
+- new metric: average distance from impure pixel to nearest edge
+- new metric: continuously distinguish edge vs corner
+- speed up for CZ wafer alg
+- adjust thresholds for crack detection
+
+Version NY.3.0.2.2
+------------------
+
+- bug fixes in crack detection algorithm
+
+Version NY.3.0.2.1
+------------------
+
+- updates to crack detection algorithm
+
+Version NY.3.0.2.0
+------------------
+
+- major refactor of features_cz: now wafers and cells are separate files
+- new CZ wafer functions: turn off slip lines & ring suppression
+- added CZ feature extraction for post-diffusion
+
+Version NY.3.0.1.3
+------------------
+
+- update to mono crack protocol: minimum enclosing rectangle
+
+Version NY.3.0.1.2
+------------------
+
+- return width and height of each crack for mono wafers
+- updates to mono wafer crack algorithm
+
+Version NY.3.0.1.1
+------------------
+
+- save original version of cropped image if custom preprocessing
+- if custom fully impure detection, ignore hard coded rules
+- fix to bright impure edges: smooth transition to remove line artifacts
+- update fully impure thresholds
+- reset parameters when running new data sets
+
+Version NY.3.0.1.0
+------------------
+
+- adjustment to robust metric normalisation
+- handle impure edges with dense & bright inverted ridge lines
+- wafer classification rules
+- updates to cell cropping
+
+Version NY.3.0.0.5
+------------------
+
+- new metric for dominant grain orientation
+- added callbacks for fully impure and wafer classification. this allows the
+  algorithm to be tuned for specific data sets without changes to the core
+- callback for set specific preprocessing
+- optional modification to cropping algorithm for better cell support
+- normalise defect_robust to range [0, 10]
+
+Version NY.3.0.0.4
+------------------
+
+- fixed bugs in report: thumbnail gallery & R2 history plot
+- introduced "fast mode"
+- performance improvement to Gaussian filtering
+
+Version NY.3.0.0.3
+------------------
+
+- improved support for megapixel images
+- moved parameters for robust dislocations to parameters.py
+- bug fix in dark_lines_pure_area
+- removed lifetime normalization: not being used, auto-normalization works well, prefer consistency
+- minor update to wafer classification
+
+Version NY.3.0.0.2
+------------------
+
+- code cleanup and documentation
+- updated wafer classification
+- performance optimization
+- remove dependencies on G1 data (emphasis is on consistent results)
+
+Version NY.3.0.0.1
+------------------
+
+- tuning of defect_robust parameters
+
+Version NY.3.0.0.0
+------------------
+
+- major re-write of ImpurityDetection
+- re-write of WaferClassification
+- removal of BlobDetection (no longer necessary)
+- new metrics: defect_robust & defect_surface
+
+Version NY.2.8.0.8
+------------------
+
+- added wafer classification repeatability to reports
+- new R&D cropping function, integrated with server
+
+Version NY.2.8.0.7
+------------------
+
+- minor fix to help preserve dark corners for CZ wafer stripe correction
+
+Version NY.2.8.0.6
+------------------
+
+- updates to CZ processing:
+  - fixed stripe correction bugs
+  - apply crack detection on original image
+
+Version NY.2.8.0.5
+------------------
+
+- added stripe correction option to CZ processing
+
+Version NY.2.8.0.4
+------------------
+
+- Added historical data to this report
+- New feature metrics: decorated_gb_strength & defect_texture
+- renamed "feature_extraction" as "features_multi"
+
+Version NY.2.8.0.3
+------------------
+
+- Added parameter to adjust the dislocation strong/weak cutoff
+
+Version NY.2.8.0.2
+------------------
+
+- removed division by zero warning
+- added edge/corner strength features back in
+
+Version NY.2.8.0.1
+------------------
+
+- python libraries have been updated to the latest version
+- remove skloupe
+
+Version NY.2.8.0.0
+------------------
+
+- changed repeatability metric
+- added a new feature that determines if a wafer has decorated grain boundaries (if G1 data is available)
+- added a new wafer type: broken (currently not enabled)
+- a new parameter set the impure threshold
+- major code refactor, mostly to do with wafer classification
+- work on crack detection (both wafer and cell)
+
+Version NY.2.7.2.0
+------------------
+
+- move parameter descriptions out of parameters.py, into documentation PDF
+- removed G1_AVAILABLE parameters, as it is no longer necessary
+- added G1 support to run_batch
+
+Version NY.2.7.1.2
+------------------
+
+- bug fix: catch dislocation masks that cover 100% of image
+- more documentation to paramters file
+- bug fix: MEDIAN_FILTER_ITERATIONS can now be edited in batch mode
+- added multi-processing functionality to batch mode
+
+Version NY.2.7.1.1
+------------------
+
+- added new repeatability set
+- changed the way repeatability is measured in the version report
+- code cleanup
+- move function comments to docstrings, so compatible with sphinx
+- auto-generate documentation, and include PDF with each release
+- automatically include all parameters settings in server response
+
+Version NY.2.7.1.0
+------------------
+
+- added new QCell set to testing/reporting framework
+- G1 alignment fixes
+- updated server protocol: more options for CZ/multi cropping
+
+Version NY.2.7.0.1
+------------------
+
+- complete rework of wafer classification
+- include release notes (e.g. this sentence) on front page of release PDF
+- some small performance improvements
+- impurity detection fix
+- use G1 data to update foreground map
+- unification of auto & G1 approaches to updating the G1 mask
+- modified 'ridges_removed' to work with both approaches
+
+Version NY.2.7.0.0
+------------------
+
+- move some parameters from function input to parameters.py
+- remove deprecated parameters
+
+Version NY.2.6.4.0
+------------------
+
+- new approach to transition correction
+- better performance for wedges, and fixed impure island problem
+- bug fixes, refactoring & code cleanup
+- speed improvements?
+
+Version NY.2.6.3.2
+------------------
+
+- server fix
+
+Version NY.2.6.3.1
+------------------
+
+- new CZ features
+- improved BlobDetection()
+
+Version NY.2.6.3.0
+------------------
+
+- unify normalised/unnormalised algs for more consistent metrics
+- better fallback when lifetime PLs > bound_upper
+	- better display
+	- better impurity
+- improved block algorithm
+- fixed bug that was causing dislocation islands inside dark impure areas
+
+Version NY.2.6.2.8
+------------------
+
+- Added wafer classification results to report
+- Added a few new metrics
+
+Version NY.2.6.2.7
+------------------
+
+- update to wafer classification rules
+- refactored parameters.py
+- updates to CZ defect algorithm
+- new impure metric
+- worked on block cropping
+
+Version NY.2.6.2.6
+------------------
+
+- minor fix: do median filter earlier
+
+Version NY.2.6.2.3
+------------------
+
+- updated cz metric names
+- added impure blob detection
+
+Version NY.2.6.2.2
+------------------
+
+- bug fixes and parameter tuning
+- CZ also returns 8-bit
+
+Version NY.2.6.2.0
+------------------
+
+- a bit of speed optimization
+- return both 8-bit and 16-bit for mode 17
+
+Version NY.2.6.2.0
+------------------
+
+- move the dislocation mask threshold to the parameters file
+- some changes to wafer classification
+- mode 17 returns 16-bit image
+
+Version NY.2.6.1.0
+------------------
+
+- changes to CZ wafer algorithm (no longer distinguish between cracks & slip lines)
+
+Version NY.2.6.0.1
+------------------
+
+- no longer detect "transition zones". remove them before dislocation detection
+  and then add them back. this is better for dislocations that straddles impure
+  and pure areas
+- wafer type classification
+
+Version NY.2.6.0.0
+------------------
+
+- Major update: impurity detection has two different functions, one
+  based on the presence of of inverted ridges, and one based on gradients
+  along the edges
+
+Version NY.2.5.0.5
+------------------
+
+- updates to cell crack detection
+
+Version NY.2.5.0.3
+------------------
+
+- cell crack detection
+
+Version NY.2.5.0.2
+------------------
+
+- block feature extraction
+
+Version NY.2.5.0.1
+------------------
+
+- minor protocol update
+
+Version NY.2.5.0.0
+------------------
+
+- if hist_99 is above bound_upper, use unnormalised normalisation
+- new connected component labelling algorithm
+- optimised CZ features & added to server
+
+Version NY.2.4.1.1
+------------------
+
+- new approach to impure region classification using discrimination functions
+- speed improvements
+- bug fixes in build
+
+Version NY.2.4.1.0 dev
+----------------------
+
+- Cleaned up README/PROTOCOL & convert to markdown
+- fix bug with fully impure threshold (force to [0...0.5])
+- added a parameter for number of median filter iterations
+- server returns settings & params
+- major changes to "feature maps" algorithm
+- added a "wafer type" feature
+
+Version NY.2.4.0.3 (24/10/2012)
+-------------------------------
+
+- Fixed G1 division by 0
+
+Version NY.2.4.0.2 (24/10/2012)
+-------------------------------
+
+- dynamically adjust sigma when smoothing histogram (was oversmoothing for images with low PL counts)
+
+Version NY.2.4.0.1 (24/10/2012)
+-------------------------------
+
+- when sending back cropped W2 image, send a normalised version (not stretched to 0...255)
+
+Version NY.2.4.0.0 (23/10/2012)
+-------------------------------
+
+- return a cropped G1 image for display
+
+Version NY.2.3.0.1 (23/10/2012)
+-------------------------------
+
+- fix to "pure area" metrics
+- update pure/impure thresdhold
+
+Version NY.2.3.0.1 (22/10/2012)
+-------------------------------
+
+- new impure metric
+- better support for 1MP images
+- replace coner pixels to handle chamfer, and support less border erosion
+
+Version NY.2.3.0.0 (18/10/2012)
+-------------------------------
+
+- faster cropping
+- server timeout fix
+- return grain sizes
+
+Version NY.2.2.0.1 (03/10/2012)
+-------------------------------
+
+- speed optimizations
+
+Version NY.2.2.0.0 (01/10/2012)
+-------------------------------
+
+- bug fixes and changes to Maps algoriths
+- significant change to grain boundary algorithm
+
+Version NY.2.1.0.1 (21/09/2012)
+-------------------------------
+
+- some names changes and bug fixes
+
+Version NY.2.1.0.0 (19/09/2012)
+-------------------------------
+
+- multiple protocol changes:
+	- return location of W2 corners
+	- updated W2 parameter definitions
+- some metrics and parameters renamed
+- bug fixes
+- added a new transition zone detection algorithm
+- added combined G1+W2 metrics
+
+Version NY.2.0.1.0 (24/08/2012)
+-------------------------------
+
+- add a single step W2 option
+
+Version NY.2.0.0.5 (23/08/2012)
+-------------------------------
+
+- added rules to detect fully impure wafers
+- new iterpolation method for heavy dislocation areas
+
+Version NY.2.0.0 (17/08/2012)
+-----------------------------
+
+- GCL release candidate
+- code refactor
+- many speed optimizations
+
+Version NY.1.0.0 (17/08/2012)
+-----------------------------
+
+Version NY.0.9.0.0 (10/08/2012)
+-------------------------------
+
+- return all metrics and metric names
+
+Version NY.0.8.1.0 (07/08/2012)
+-------------------------------
+
+- Bug fixes to grain boundary detection
+- Bug fixes and updates to feature maps algorithm
+
+Version NY.0.8.0.2 (02/08/2012)
+-------------------------------
+
+- Bug fixes and updates to feature maps algorithm
+
+Version NY.0.8.0.0 (02/08/2012)
+-------------------------------
+
+- Major update: W2 + G1 integration
+
+Version NY.0.7.0.0 (15/06/2012)
+-------------------------------
+
+- Return rotation corrected images
+
+Version NY.0.6.0.1 (29/05/2012)
+-------------------------------
+
+- Reload parameters for every request
+
+
+Version NY.0.6.0.0 (29/05/2012)
+-------------------------------
+
+- Added cropping for pseudo wafers
+- Added red defect mask
+- Removed cropping with memory mapping (currently unused)
+
+
+Version NY.0.5.0.0 (10/05/2012)
+-------------------------------
+
+- Return wafer coordinates with grain boundary info
+
+Version NY.0.4.0.3 (30/04/2012)
+-------------------------------
+
+- Cropping fix
+
+Version NY.0.4.0.2 (30/04/2012)
+-------------------------------
+
+- Updated grain boundary alg for new G1 images
+
+Version NY.0.4.0.1 (16/04/2012)
+-------------------------------
+
+- For SisterFinder, can now reset "sisters_found.txt" without restarting
+- Return values changed
+
+Version NY.0.4.0.0 (10/04/2012)
+-------------------------------
+
+- Added SisterFinder
+
+Version NY.0.3.0.1 (21/03/2012)
+-------------------------------
+
+- Send back *signed* shorts for corner coordinates (they can be negative)
+
+Version NY.0.3.0.0 (15/03/2012)
+-------------------------------
+
+- The following changes have been made to cropping:
+	- Removed dependency on precomputed rotation files
+	- Incorporated calls to OpenCV
+	- Removed "CropFast" - there is now only one cropping algorithm
+- Added grain boundary detection to algo server
+- Algo server now handles each request in its own thread
+- Added error message codes to cropping protocol
+
+
+Version NY.0.2.0.1 (29/02/2012)
+-------------------------------
+
+- Added rotation maps for downsampled images
+- Minor bug fixes
+
+Version NY.0.2.0.0 (29/02/2012)
+-------------------------------
+
+- Added README.txt file
+- Added PROTOCOL.txt file
+- Added "build_rotation_maps.py"
+- Minor cropping algorithm bug fix
+- Added 2 new rotation files
+- Added memory mapping for passing images to/from server
+- Preload all rotation maps at startup
+- Added support for building rotation maps
